@@ -82,7 +82,7 @@ jobs:
       - name: Run Lighthouse CI Audit
         run: |
           cd ${{ env.PROJECT_DIR }}
-          lhci autorun --config .lighthouserc.${{ matrix.formfactor.name }}.json
+          npx lhci autorun --config .lighthouserc.${{ matrix.formfactor.name }}.json
 
       - name: Upload LHCI Report as Artifact
         uses: actions/upload-artifact@v4
