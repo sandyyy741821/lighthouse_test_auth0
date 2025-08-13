@@ -36,12 +36,6 @@ jobs:
           npm install
           npm install puppeteer
 
-      - name: Install Chromium
-        run: |
-          sudo apt update
-          sudo apt install -y chromium-browser
-          which chromium-browser
-
       - name: Create Lighthouse CI config
         run: |
           cd ${{ env.PROJECT_DIR }}
@@ -55,7 +49,6 @@ jobs:
               "puppeteerScript": "./puppeteer-login.js",
               "puppeteerLaunchOptions": {
                   "headless": true,
-                  "executablePath": "/usr/bin/chromium-browser",
                   "args": [
                   "--no-sandbox",
                   "--disable-setuid-sandbox",
