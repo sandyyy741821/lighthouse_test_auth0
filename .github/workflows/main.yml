@@ -27,9 +27,10 @@ jobs:
       - name: Run Lighthouse CI
         run: |
           npx lhci autorun --config=lighthouserc.js
+          
 
       - name: Upload Lighthouse report
         uses: actions/upload-artifact@v4
         with:
           name: lighthouse-report
-          path: './lighthouse-reports'  # adjust if your reports are stored elsewhere
+          path: '.lighthouseci/*'
