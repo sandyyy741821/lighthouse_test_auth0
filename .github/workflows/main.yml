@@ -28,19 +28,15 @@ jobs:
           PROJECT_DIR=$(find . -name package.json -exec dirname {} \; | head -n 1)
           echo "PROJECT_DIR=$PROJECT_DIR" >> $GITHUB_ENV
           echo "Found project directory: $PROJECT_DIR"
-
-
       - name: Install Lighthouse CI and Dependencies
         run: |
           cd ${{ env.PROJECT_DIR }}
           npm install -g @lhci/cli
           npm install
           npm install puppeteer
-
       - name: Create .lighthouseci directory
         run: |
           mkdir -p ${{ env.PROJECT_DIR }}/.lighthouseci
-
       - name: Create Lighthouse CI Config with appIsReady check
         run: |
           cd ${{ env.PROJECT_DIR }}
@@ -50,9 +46,9 @@ jobs:
               "collect": {
                 "startServerCommand": "export cross-env NODE_OPTIONS=--openssl-legacy-provider && PORT=3000 npm start",
                 "url": ["http://localhost:3000/", "http://localhost:3000/articles"],
-                "puppeteerScript": './puppeteer-login.js',
+                "puppeteerScript": "./puppeteer-login.js",
                 "puppeteerLaunchOptions": {
-                    "headless": true, // << SEE what's happening
+                    "headless": true, 
                     "args": [
                         '--no-sandbox',
                         '--disable-setuid-sandbox',
@@ -83,17 +79,13 @@ jobs:
             }
           }
           EOF
-
-
       - name: Run Lighthouse CI Audit
         run: |
           cd ${{ env.PROJECT_DIR }}
           lhci autorun --config .lighthouserc.${{ matrix.formfactor.name }}.json
           
-
       - name: Upload LHCI Report as Artifact
         uses: actions/upload-artifact@v4
         with:
           name: lhci-report-${{ matrix.formfactor.name }}
           path: ${{ env.PROJECT_DIR }}/lhci-report-${{ matrix.formfactor.name }}/**
-
