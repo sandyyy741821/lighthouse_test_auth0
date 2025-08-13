@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
 import PleaseVerify from './PleaseVerify.jsx';
-import Welcome from './welcome.jsx';
+import Welcome from './Welcome.jsx';
 import Articles from './Articles.jsx';
 import { Auth0Provider } from '@auth0/auth0-react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
