@@ -4,8 +4,7 @@ module.exports = {
       numberOfRuns: 1,
       puppeteerScript: './puppeteer-login.js',
       puppeteerLaunchOptions: {
-        headless: false, // << SEE what's happening
-        slowMo: 50,
+        headless: true, // << SEE what's happening
         args: [
             '--no-sandbox',
             '--disable-setuid-sandbox',

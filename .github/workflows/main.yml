@@ -1,36 +1,99 @@
-name: Lighthouse CI with Puppeteer
+name: Lighthouse CI with appIsReady Check
 
 on:
-    workflow_dispatch:
+  push:
+    branches:
+      - '**'
+  pull_request_target:
+  workflow_dispatch:
+
 jobs:
-  lhci:
+  lighthouse:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        formfactor:
+          - name: laptop
+            width: 1080
+            height: 1920
+            preset: "desktop"
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Start local server
+      - name: Find project directory with package.json
+        id: find_dir
         run: |
-          npm run build
-          npm run start &
-          sleep 5 # give server time to start
+          PROJECT_DIR=$(find . -name package.json -exec dirname {} \; | head -n 1)
+          echo "PROJECT_DIR=$PROJECT_DIR" >> $GITHUB_ENV
+          echo "Found project directory: $PROJECT_DIR"
 
-      - name: Run Lighthouse CI
+
+      - name: Install Lighthouse CI and Dependencies
         run: |
-          npx lhci autorun --config=lighthouserc.js
+          cd ${{ env.PROJECT_DIR }}
+          npm install -g @lhci/cli
+          npm install
+          npm install puppeteer
+
+      - name: Create .lighthouseci directory
+        run: |
+          mkdir -p ${{ env.PROJECT_DIR }}/.lighthouseci
+
+      - name: Create Lighthouse CI Config with appIsReady check
+        run: |
+          cd ${{ env.PROJECT_DIR }}
+          cat << EOF > .lighthouserc.${{ matrix.formfactor.name }}.json
+          {
+            "ci": {
+              "collect": {
+                "startServerCommand": "export cross-env NODE_OPTIONS=--openssl-legacy-provider && PORT=3000 npm start",
+                "url": ["http://localhost:3000/", "http://localhost:3000/articles"],
+                "puppeteerScript": './puppeteer-login.js',
+                "puppeteerLaunchOptions": {
+                    "headless": true, // << SEE what's happening
+                    "args": [
+                        '--no-sandbox',
+                        '--disable-setuid-sandbox',
+                        '--disable-web-security',
+                        '--disable-features=BlockInsecurePrivateNetworkRequests',
+                        '--disable-site-isolation-trials',
+                    ],
+                },
+                "waitForExpression": "window.appIsReady === true",
+                "numberOfRuns": 1,
+                "settings": {
+                  "preset": "${{ matrix.formfactor.preset }}",
+                  "emulatedFormFactor": "${{ matrix.formfactor.name }}",
+                  "screenEmulation": {
+                    "mobile": false,
+                    "width": ${{ matrix.formfactor.width }},
+                    "height": ${{ matrix.formfactor.height }},
+                    "deviceScaleFactor": 1,
+                    "disabled": false
+                  },
+                  "throttlingMethod": "simulate"
+                }
+              },
+              "upload": {
+                "target": "filesystem",
+                "outputDir": "./lhci-report-${{ matrix.formfactor.name }}"
+              }
+            }
+          }
+          EOF
+
+
+      - name: Run Lighthouse CI Audit
+        run: |
+          cd ${{ env.PROJECT_DIR }}
+          lhci autorun --config .lighthouserc.${{ matrix.formfactor.name }}.json
           
 
-      - name: Upload Lighthouse report
+      - name: Upload LHCI Report as Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: lighthouse-report
-          path: '.lighthouseci/*'
+          name: lhci-report-${{ matrix.formfactor.name }}
+          path: ${{ env.PROJECT_DIR }}/lhci-report-${{ matrix.formfactor.name }}/**
+
