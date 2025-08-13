@@ -3,7 +3,7 @@ name: Lighthouse CI with appIsReady Check
 on:
   push:
     branches:
-      - '**'
+      - "**"
   pull_request_target:
   workflow_dispatch:
 
@@ -50,11 +50,11 @@ jobs:
                 "puppeteerLaunchOptions": {
                     "headless": true, 
                     "args": [
-                        '--no-sandbox',
-                        '--disable-setuid-sandbox',
-                        '--disable-web-security',
-                        '--disable-features=BlockInsecurePrivateNetworkRequests',
-                        '--disable-site-isolation-trials',
+                        "--no-sandbox",
+                        "--disable-setuid-sandbox",
+                        "--disable-web-security",
+                        "--disable-features=BlockInsecurePrivateNetworkRequests",
+                        "--disable-site-isolation-trials",
                     ],
                 },
                 "waitForExpression": "window.appIsReady === true",
