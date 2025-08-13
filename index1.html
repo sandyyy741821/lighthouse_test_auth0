@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Sign In with FuturX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.auth0.com/js/lock/13.0/lock.min.js"></script>
+  <style>
+    body {
+      background-color: #F1F5F9;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+
+    .auth0-lock.auth0-lock .auth0-lock-header-logo {
+      max-height: 60px;
+    }
+
+    .auth0-lock.auth0-lock .auth0-lock-header {
+      padding-bottom: 0;
+    }
+
+    .auth0-lock.auth0-lock .auth0-lock-header h1 {
+      color: #000000;
+      font-size: 20px;
+      margin-top: 0.5rem;
+      font-weight: 600;
+    }
+
+    .auth0-lock.auth0-lock .auth0-lock-header .auth0-lock-header-welcome {
+      color: #6B7280;
+      font-size: 14px;
+      font-weight: 400;
+      margin-top: 0;
+    }
+
+    .auth0-lock.auth0-lock .auth0-lock-social-button-text {
+      color: #ffffff;
+    }
+
+    .auth0-lock.auth0-lock .auth0-lock-input {
+      background-color: #ffffff;
+      border-color: #6B7280;
+      color: #000000;
+    }
+
+    .auth0-lock.auth0-lock .auth0-lock-input:focus {
+      border-color: #000000;
+      box-shadow: none;
+    }
+
+    .auth0-lock.auth0-lock .auth0-lock-input-label {
+      color: #6B7280;
+    }
+
+    .auth0-lock.auth0-lock .auth0-lock-form {
+      background-color: #ffffff;
+      border: 1px solid #ffffff;
+      border-radius: 10px;
+    }
+
+    .auth0-lock.auth0-lock .auth0-lock-submit {
+      background-color: #0056D2;
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .auth0-lock.auth0-lock .auth0-lock-submit:hover {
+      background-color: #003DA5;
+    }
+
+    .auth0-lock.auth0-lock .auth0-lock-alternative-link,
+    .auth0-lock.auth0-lock .auth0-lock-header .auth0-lock-header-welcome a {
+      color: #1B487F;
+    }
+
+    .auth0-lock.auth0-lock .auth0-lock-error-invalid-hint {
+      color: #D21F3C;
+    }
+
+    .auth0-lock.auth0-lock .auth0-lock-success {
+      color: #00B86B;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    const lock = new Auth0Lock('UKpUg1eiumFfjK30sAFGbX3zWNEsuWOI', 'dev-eh3uj1z7jgk7qiuv.us.auth0.com', {
+      auth: {
+        redirectUrl: 'http://localhost:3000/',
+        responseType: 'code',
+        params: {
+          scope: 'openid profile email'
+        }
+      },
+      theme: {
+        primaryColor: '#0056D2',
+        logo: 'https://pub-fc6577be55b5474c8707ffec1e9de47b.r2.dev/Futurx_Primarylogo_logo-fullcolor-rgb.png'
+      },
+      languageDictionary: {
+        title: "Gateway to Global Education",
+        loginSubmitLabel: "Continue",
+        emailInputPlaceholder: "Email address",
+        passwordInputPlaceholder: "Password",
+        forgotPasswordAction: "Forgot password?",
+        orLabel: "or",
+        success: {
+          login: "Success!"
+        },
+        error: {
+          login: {
+            "lock.fallback": "Oops! Login failed. Please contact FuturX support."
+          }
+        }
+      },
+      allowedConnections: ['google-oauth2', 'facebook', 'Username-Password-Authentication'],
+      closable: false
+    });
+
+    // Custom error handling
+    lock.on("unrecoverable_error", function(error) {
+      alert("Custom Error: Something went wrong. Please contact FuturX support.");
+      console.error("Login failed:", error);
+    });
+
+    lock.show();
+  </script>
+</body>
+</html>
