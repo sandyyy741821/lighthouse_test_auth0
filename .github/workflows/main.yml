@@ -32,4 +32,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: lighthouse-report
-          path: '.lighthouseci/*'  # adjust if your reports are stored elsewhere
+          path: './lighthouse-reports'  # adjust if your reports are stored elsewhere
