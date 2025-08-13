@@ -32,9 +32,7 @@ jobs:
       - name: Install Node.js dependencies
         run: |
           cd ${{ env.PROJECT_DIR }}
-          npm install -g @lhci/cli
-          npm install
-          npm install puppeteer
+          npm ci
 
       - name: Create Lighthouse CI config
         run: |
