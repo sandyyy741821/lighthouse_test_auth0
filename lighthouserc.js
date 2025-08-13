@@ -14,7 +14,7 @@ module.exports = {
             '--disable-site-isolation-trials',
         ],
     },
-      chromePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+    //   chromePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
       url: [
         "http://localhost:3000/",
         "http://localhost:3000/articles"
