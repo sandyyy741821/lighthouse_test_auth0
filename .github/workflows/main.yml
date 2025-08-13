@@ -28,57 +28,61 @@ jobs:
           PROJECT_DIR=$(find . -name package.json -exec dirname {} \; | head -n 1)
           echo "PROJECT_DIR=$PROJECT_DIR" >> $GITHUB_ENV
           echo "Found project directory: $PROJECT_DIR"
+
       - name: Install Lighthouse CI and Dependencies
         run: |
           cd ${{ env.PROJECT_DIR }}
           npm install -g @lhci/cli
           npm install
           npm install puppeteer
+
       - name: Create .lighthouseci directory
         run: |
           mkdir -p ${{ env.PROJECT_DIR }}/.lighthouseci
+
       - name: Create Lighthouse CI Config with appIsReady check
         run: |
-          cd ${{ env.PROJECT_DIR }}
-          cat << EOF > .lighthouserc.${{ matrix.formfactor.name }}.json
-          {
+            cd ${{ env.PROJECT_DIR }}
+            cat << EOF > .lighthouserc.${{ matrix.formfactor.name }}.json
+            {
             "ci": {
-              "collect": {
-                "startServerCommand": "export cross-env NODE_OPTIONS=--openssl-legacy-provider && PORT=3000 npm start",
+                "collect": {
+                "startServerCommand": "npx cross-env NODE_OPTIONS=--openssl-legacy-provider PORT=3000 npm start",
                 "url": ["http://localhost:3000/", "http://localhost:3000/articles"],
                 "puppeteerScript": "./puppeteer-login.js",
                 "puppeteerLaunchOptions": {
-                    "headless": true, 
+                    "headless": true,
                     "args": [
-                        "--no-sandbox",
-                        "--disable-setuid-sandbox",
-                        "--disable-web-security",
-                        "--disable-features=BlockInsecurePrivateNetworkRequests",
-                        "--disable-site-isolation-trials",
-                    ],
+                    "--no-sandbox",
+                    "--disable-setuid-sandbox",
+                    "--disable-web-security",
+                    "--disable-features=BlockInsecurePrivateNetworkRequests",
+                    "--disable-site-isolation-trials"
+                    ]
                 },
                 "waitForExpression": "window.appIsReady === true",
                 "numberOfRuns": 1,
                 "settings": {
-                  "preset": "${{ matrix.formfactor.preset }}",
-                  "emulatedFormFactor": "${{ matrix.formfactor.name }}",
-                  "screenEmulation": {
+                    "preset": "${{ matrix.formfactor.preset }}",
+                    "emulatedFormFactor": "${{ matrix.formfactor.name }}",
+                    "screenEmulation": {
                     "mobile": false,
                     "width": ${{ matrix.formfactor.width }},
                     "height": ${{ matrix.formfactor.height }},
                     "deviceScaleFactor": 1,
                     "disabled": false
-                  },
-                  "throttlingMethod": "simulate"
+                    },
+                    "throttlingMethod": "simulate"
                 }
-              },
-              "upload": {
+                },
+                "upload": {
                 "target": "filesystem",
                 "outputDir": "./lhci-report-${{ matrix.formfactor.name }}"
-              }
+                }
             }
-          }
-          EOF
+            }
+            EOF
+            
       - name: Run Lighthouse CI Audit
         run: |
           cd ${{ env.PROJECT_DIR }}
