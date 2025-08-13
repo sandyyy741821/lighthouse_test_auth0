@@ -1,0 +1,35 @@
+name: Lighthouse CI with Puppeteer
+
+on:
+    workflow_dispatch:
+jobs:
+  lhci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Start local server
+        run: |
+          npm run build
+          npm run start &
+          sleep 5 # give server time to start
+
+      - name: Run Lighthouse CI
+        run: |
+          npx lhci autorun --config=lighthouserc.js
+
+      - name: Upload Lighthouse report
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-report
+          path: '.lighthouseci/*'  # adjust if your reports are stored elsewhere

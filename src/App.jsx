@@ -53,7 +53,7 @@ function App() {
   return (
     <div style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
       {!isAuthenticated ? (
-        <button onClick={() => loginWithRedirect()}>Login</button>
+        <button onClick={() => loginWithRedirect()} className='login' type='submit'>Login</button>
       ) : (
         <>
           <h2>Welcome, {user.name}</h2>
@@ -66,7 +66,7 @@ function App() {
           >
             Logout
           </button>
-          
+
           <Link to="/articles">
             <button>Articles</button>
           </Link>
